@@ -83,25 +83,13 @@ int main() {
 
         ImGui::Begin("Menu");
 
-        if (ImGui::Button("Explorer Mode")) {
-            isExplorerMode = true;
-            std::cout << "explorer mode: " << isExplorerMode << std::endl;
-        }
-
         ImGui::SameLine();
 
-        if (ImGui::Button("Developer Mode")) {
-            isExplorerMode = false;
-            std::cout << "explorer mode: " << isExplorerMode << std::endl;
-        }
-
-        if (!isExplorerMode) {
-            show_particle_spawner_menu();
-            show_batch_spawn_case_1();
-            show_batch_spawn_case_2();
-            show_batch_spawn_case_3();
-            show_reset_button();
-        }
+        show_particle_spawner_menu();
+        show_batch_spawn_case_1();
+        show_batch_spawn_case_2();
+        show_batch_spawn_case_3();
+        show_reset_button();
 
         ImGui::End();
 
@@ -109,11 +97,6 @@ int main() {
 
         // update particles 
         std::vector<std::future<void>> particle_futures = update_particles(particles);
-
-        // Update sprite in another thread 
-        std::future<void> sprite_future; 
-        if(isExplorerMode) // only launch async if in explorer mode 
-            sprite_future = spriteManager.updateAsync(window, isExplorerMode);
 
         // Clear the window
         window.clear();
@@ -128,8 +111,6 @@ int main() {
         }
 
         // wait for sprite position calculations
-        if(isExplorerMode)
-            sprite_future.get();
 
         // restart clock, don't move this or else it affects the position of the particles 
         frame_clock.restart();
@@ -139,22 +120,8 @@ int main() {
 
         // Draw particles
 
-        if (isExplorerMode) {
-
-            sf::View currentView = window.getView();
-            sf::FloatRect viewBounds = sf::FloatRect(currentView.getCenter() - currentView.getSize() / 2.f, currentView.getSize());
-
-            for (const auto& particle : particles) {
-
-                if (viewBounds.intersects(particle.shape.getGlobalBounds())) {
-                    window.draw(particle.shape);
-                }
-            }
-        }
-        else {
-            for (const auto& particle : particles) {
-                window.draw(particle.shape);
-            }
+        for (const auto& particle : particles) {
+            window.draw(particle.shape);
         }
 
         // Display the contents of the window
