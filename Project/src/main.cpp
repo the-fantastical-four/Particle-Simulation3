@@ -53,7 +53,6 @@ int main() {
     sf::Clock deltaClock;
 
     SpriteManager spriteManager("include/pikachu.png", sf::Vector2f(0.5f, 0.5f), sf::Vector2f(0, 0));
-    bool isExplorerMode = false;
 
     // Create background 
     sf::RectangleShape background;
@@ -116,7 +115,7 @@ int main() {
         frame_clock.restart();
 
         // Draw sprite 
-        spriteManager.draw(window, isExplorerMode);
+        // spriteManager.draw(window);
 
         // Draw particles
 

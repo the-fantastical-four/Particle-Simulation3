@@ -12,7 +12,7 @@ class SpriteManager {
 public:
     SpriteManager(const std::string& texturePath, const sf::Vector2f& scale, const sf::Vector2f& initialPosition);
     void update(sf::RenderWindow& window, bool isExplorerMode);
-    void draw(sf::RenderWindow& window, bool isExplorerMode);
+    void draw(sf::RenderWindow& window);
     std::future<void> updateAsync(sf::RenderWindow& window, bool isExplorerMode);
 
 private:

@@ -42,35 +42,9 @@ std::future<void> SpriteManager::updateAsync(sf::RenderWindow& window, bool isEx
         });
 }
 
-void SpriteManager::draw(sf::RenderWindow& window, bool isExplorerMode) {
-    if (isExplorerMode) {
-        // Periphery dimensions in pixels
-        const float peripheryWidth = 33 * 10; // 33 columns, each 10 pixels wide
-        const float peripheryHeight = 19 * 10; // 19 rows, each 10 pixels tall
-
-        // Center the view on the sprite's current position
-        sf::Vector2f center(sprite.getPosition().x + sprite.getGlobalBounds().width / 2, sprite.getPosition().y + sprite.getGlobalBounds().height / 2);
-        sf::View view(center, sf::Vector2f(peripheryWidth, peripheryHeight));
-
-        
-        window.setView(view);
-        window.draw(sprite);
-
-        //Draw the red border around sprite
-        sf::FloatRect spriteBounds = sprite.getGlobalBounds();
-        sf::RectangleShape border(sf::Vector2f(spriteBounds.width, spriteBounds.height)); // 10 is the extra size for the border, adjust as needed
-
-        border.setFillColor(sf::Color::Transparent); // Fill color is transparent, only the border will be visible
-        border.setOutlineColor(sf::Color::Red); // Red border color
-        border.setOutlineThickness(1); // Thickness of the border, adjust as needed
-        border.setPosition(sprite.getPosition().x, sprite.getPosition().y); // Adjust position to align with the sprite, considering the border thickness
-
-        window.draw(border);
-    } else {
-         // If not in explorer mode, reset to the default view
-         window.setView(window.getDefaultView());
-         window.draw(sprite);
-
-    }
+void SpriteManager::draw(sf::RenderWindow& window) {
+    // If not in explorer mode, reset to the default view
+    window.setView(window.getDefaultView());
+    window.draw(sprite);
     
 }
