@@ -11,9 +11,9 @@ extern const int WIDTH;
 class SpriteManager {
 public:
     SpriteManager(const std::string& texturePath, const sf::Vector2f& scale, const sf::Vector2f& initialPosition);
-    void update(sf::RenderWindow& window, bool isExplorerMode);
+    void update(sf::Vector2f newPosition);
     void draw(sf::RenderWindow& window);
-    std::future<void> updateAsync(sf::RenderWindow& window, bool isExplorerMode);
+    std::future<void> updateAsync(sf::Vector2f newPosition);
 
 private:
     sf::Texture texture;

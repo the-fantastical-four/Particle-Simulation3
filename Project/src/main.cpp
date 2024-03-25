@@ -13,6 +13,7 @@
 #include "Physics.h"
 #include "GUIhelpers.h"
 #include "SpriteManager.h" 
+#include "Connection.h"
 
 using namespace std;
 
@@ -36,6 +37,8 @@ float batch_x_c = 0.f, batch_y_c = 0.f, batch_angle_c = 0.f, batch_start_speed_c
 
 std::vector<Particle> particles;
 
+std::vector<SpriteManager> sprites; 
+
 void show_frame_rate(float fps) {
     ImGui::Begin("Frame Rate");
     ImGui::Text("Frame Rate: %.2f", fps);
@@ -52,7 +55,9 @@ int main() {
 
     sf::Clock deltaClock;
 
-    SpriteManager spriteManager("include/pikachu.png", sf::Vector2f(0.5f, 0.5f), sf::Vector2f(0, 0));
+    // SpriteManager spriteManager("include/pikachu.png", sf::Vector2f(0.5f, 0.5f), sf::Vector2f(0, 0));
+    std::thread acceptClientThread(acceptClients); 
+    acceptClientThread.detach(); 
 
     // Create background 
     sf::RectangleShape background;
@@ -116,6 +121,9 @@ int main() {
 
         // Draw sprite 
         // spriteManager.draw(window);
+        for (auto& sprite : sprites) {
+            sprite.draw(window); 
+        }
 
         // Draw particles
 

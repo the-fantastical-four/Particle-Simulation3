@@ -244,6 +244,7 @@
     <ClInclude Include="include\SFML\Window\WindowBase.hpp" />
     <ClInclude Include="include\SFML\Window\WindowHandle.hpp" />
     <ClInclude Include="include\SFML\Window\WindowStyle.hpp" />
+    <ClInclude Include="src\Connection.h" />
     <ClInclude Include="src\GUIHelpers.h" />
     <ClInclude Include="src\Particle.h" />
     <ClInclude Include="src\Physics.h" />
