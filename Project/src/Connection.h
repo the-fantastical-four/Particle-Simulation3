@@ -13,6 +13,10 @@ extern std::vector<SpriteManager> sprites;
 
 std::mutex clientsMutex; 
 
+int connectionCounter = 0; 
+
+std::string imgPaths[2] = { "include/pikachu.png", "include/snorlax.png" };
+
 unsigned short port = 6250; 
 
 void receiveFromClient(sf::TcpSocket* clientSocket, SpriteManager* sprite) {
@@ -44,11 +48,12 @@ void acceptClients() {
             sf::TcpSocket* clientPtr = client.get();
             clients.emplace_back(std::move(client));
 
-            sprites.emplace_back("include/pikachu.png", sf::Vector2f(0.5f, 0.5f), sf::Vector2f(0, 0));
+            sprites.emplace_back(imgPaths[connectionCounter], sf::Vector2f(0.5f, 0.5f), sf::Vector2f(0, 0));
             SpriteManager* spritePtr = &sprites.back(); 
 
             std::thread clientThread(receiveFromClient, clientPtr, spritePtr); 
             clientThread.detach(); 
+            connectionCounter++; 
         }
 	}
 }
