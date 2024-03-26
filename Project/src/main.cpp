@@ -37,7 +37,9 @@ float batch_x_c = 0.f, batch_y_c = 0.f, batch_angle_c = 0.f, batch_start_speed_c
 
 std::vector<Particle> particles;
 
-std::vector<SpriteManager> sprites; 
+std::vector<SpriteManager*> sprites; 
+
+std::mutex clientsMutex; 
 
 void show_frame_rate(float fps) {
     ImGui::Begin("Frame Rate");
@@ -122,7 +124,7 @@ int main() {
         // Draw sprite 
         // spriteManager.draw(window);
         for (auto& sprite : sprites) {
-            sprite.draw(window); 
+            sprite->draw(window); 
         }
 
         // Draw particles

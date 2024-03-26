@@ -8,10 +8,11 @@
 #include "SpriteManager.h"
 
 sf::TcpListener listener; 
-std::vector<std::unique_ptr<sf::TcpSocket>> clients;
-extern std::vector<SpriteManager> sprites; 
+sf::SocketSelector selector; 
+std::vector<sf::TcpSocket*> clients;
+extern std::vector<SpriteManager*> sprites; 
 
-std::mutex clientsMutex; 
+extern std::mutex clientsMutex; 
 
 int connectionCounter = 0; 
 
@@ -19,41 +20,52 @@ std::string imgPaths[2] = { "include/pikachu.png", "include/snorlax.png" };
 
 unsigned short port = 6250; 
 
-void receiveFromClient(sf::TcpSocket* clientSocket, SpriteManager* sprite) {
-    while (true) {
-        std::lock_guard<std::mutex> lock(clientsMutex); 
-        sf::Packet packet; 
-        if (clientSocket->receive(packet) == sf::Socket::Done) {
-            float x, y; 
-            packet >> x >> y; 
-            sprite->update(sf::Vector2f(x, y)); 
-        }
-    }
-}
-
 void acceptClients() {
     if (listener.listen(port) != sf::Socket::Done) {
         std::cerr << "Failed to bind to port " << port << std::endl;
     }
-
     std::cout << "Server is listening on port " << port << std::endl;
 
+    selector.add(listener);  
+
 	while (true) {
-        auto client = std::make_unique<sf::TcpSocket>(); // Use std::make_unique to create a new sf::TcpSocket
-        client->setBlocking(false);
 
-;       if (listener.accept(*client) == sf::Socket::Done) {
-            std::lock_guard<std::mutex> lock(clientsMutex); // Lock clients vector for thread safety
+        // selector waits for data on any socket
+        if (selector.wait()) {
+            if (selector.isReady(listener)) {
 
-            sf::TcpSocket* clientPtr = client.get();
-            clients.emplace_back(std::move(client));
+                sf::TcpSocket* client = new sf::TcpSocket; 
+                client->setBlocking(false);
+                if (listener.accept(*client) == sf::Socket::Done) {
+                    clients.push_back(client); 
+                    selector.add(*client); 
 
-            sprites.emplace_back(imgPaths[connectionCounter], sf::Vector2f(0.5f, 0.5f), sf::Vector2f(0, 0));
-            SpriteManager* spritePtr = &sprites.back(); 
+                    SpriteManager* spriteManager = new SpriteManager("include/pikachu.png", sf::Vector2f(0.5f, 0.5f), sf::Vector2f(0, 0));
+                    sprites.push_back(spriteManager);
+                }
+                else {
+                    delete client; 
+                }
+            }
+            else {
+                // The listener socket is not ready, test all other sockets (the clients)
+                for (std::vector<sf::TcpSocket*>::iterator it = clients.begin(); it != clients.end(); ++it) {
+                    sf::TcpSocket& client = **it;
 
-            std::thread clientThread(receiveFromClient, clientPtr, spritePtr); 
-            clientThread.detach(); 
-            connectionCounter++; 
+                    if (selector.isReady(client)) {
+                        // The client has sent some data, we can receive it
+
+                        sf::Packet packet;
+                        if (client.receive(packet) == sf::Socket::Done) {
+                            int index = std::distance(clients.begin(), it);
+                            float x, y;
+                            packet >> x >> y;
+                            sprites[index]->update(sf::Vector2f(x, y));
+                        }
+
+                    }
+                }
+            }
         }
 	}
 }
