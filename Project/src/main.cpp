@@ -121,6 +121,8 @@ int main() {
         // restart clock, don't move this or else it affects the position of the particles 
         frame_clock.restart();
 
+        sendSpritePositions(); 
+
         // Draw sprite 
         // spriteManager.draw(window);
         for (auto& sprite : sprites) {

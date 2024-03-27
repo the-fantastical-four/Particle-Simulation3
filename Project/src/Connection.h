@@ -20,6 +20,27 @@ std::string imgPaths[2] = { "include/pikachu.png", "include/snorlax.png" };
 
 unsigned short port = 6250; 
 
+void sendSpritePositions() {
+    for (int i = 0; i < sprites.size(); i++) { // might need to lock because access sprites.size()
+
+        sf::Packet packet;
+
+        for (int j = 0; j < sprites.size(); j++) {
+
+            if (i != j) { // to avoid sending the sprite its own position 
+
+                // check if in periphery of sprite, for now not implemented 
+                packet << sprites[j]->getPosition().x << sprites[j]->getPosition().y; 
+
+            }
+        }
+
+        if (clients[i]->send(packet) != sf::Socket::Done) {
+            std::cout << "Error sending packet to client " << i << std::endl;
+        }
+    }
+}
+
 void acceptClients() {
     if (listener.listen(port) != sf::Socket::Done) {
         std::cerr << "Failed to bind to port " << port << std::endl;

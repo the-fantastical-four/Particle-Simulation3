@@ -14,6 +14,7 @@ public:
     void update(sf::Vector2f newPosition);
     void draw(sf::RenderWindow& window);
     std::future<void> updateAsync(sf::Vector2f newPosition);
+    sf::Vector2f getPosition(); 
 
 private:
     sf::Texture texture;

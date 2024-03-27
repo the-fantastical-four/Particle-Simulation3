@@ -28,3 +28,7 @@ void SpriteManager::draw(sf::RenderWindow& window) {
     window.draw(sprite);
     
 }
+
+sf::Vector2f SpriteManager::getPosition() {
+    return sprite.getPosition(); 
+}
