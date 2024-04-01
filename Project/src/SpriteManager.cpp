@@ -32,3 +32,20 @@ void SpriteManager::draw(sf::RenderWindow& window) {
 sf::Vector2f SpriteManager::getPosition() {
     return sprite.getPosition(); 
 }
+
+sf::FloatRect SpriteManager::getViewBounds() {
+    // setting periphery 
+    const float peripheryWidth = 33 * 10; // 33 columns, each 10 pixels wide
+    const float peripheryHeight = 19 * 10; // 19 rows, each 10 pixels tall
+
+    // Center the view on the sprite's current position
+    sf::Vector2f center(sprite.getPosition().x + sprite.getGlobalBounds().width / 2, 
+        sprite.getPosition().y + sprite.getGlobalBounds().height / 2);
+    sf::Vector2f peripherySize(peripheryWidth, peripheryHeight); 
+
+    return sf::FloatRect(center - peripherySize / 2.f, peripherySize);
+}
+
+sf::FloatRect SpriteManager::getGlobalBounds() {
+    return sprite.getGlobalBounds(); 
+}

@@ -15,6 +15,8 @@ public:
     void draw(sf::RenderWindow& window);
     std::future<void> updateAsync(sf::Vector2f newPosition);
     sf::Vector2f getPosition(); 
+    sf::FloatRect getViewBounds(); 
+    sf::FloatRect getGlobalBounds(); 
 
 private:
     sf::Texture texture;

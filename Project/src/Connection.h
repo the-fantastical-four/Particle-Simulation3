@@ -7,10 +7,15 @@
 #include <mutex>
 #include "SpriteManager.h"
 
+#define SPRITE 0
+#define PARTICLE 1
+
 sf::TcpListener listener; 
 sf::SocketSelector selector; 
+
 std::vector<sf::TcpSocket*> clients;
 extern std::vector<SpriteManager*> sprites; 
+extern std::vector<Particle> particles; 
 
 extern std::mutex clientsMutex; 
 
@@ -20,7 +25,15 @@ std::string imgPaths[2] = { "include/pikachu.png", "include/snorlax.png" };
 
 unsigned short port = 6250; 
 
-void sendSpritePositions() {
+bool isWithinPeriphery(sf::FloatRect objectBounds, sf::FloatRect periphery) {
+    if (periphery.intersects(objectBounds)) {
+        return true; 
+    }
+
+    return false; 
+}
+
+void sendSpriteAndParticlePositions() {
     for (int i = 0; i < sprites.size(); i++) { // might need to lock because access sprites.size()
 
         sf::Packet packet;
@@ -29,10 +42,32 @@ void sendSpritePositions() {
 
             if (i != j) { // to avoid sending the sprite its own position 
 
+                /*
                 // check if in periphery of sprite, for now not implemented 
-                packet << sprites[j]->getPosition().x << sprites[j]->getPosition().y; 
+                if (isWithinPeriphery(sprites[j]->getGlobalBounds(), sprites[i]->getViewBounds())) {
+                    sf::Uint8 messageType = SPRITE; 
+                    packet << sprites[j]->getPosition().x << sprites[j]->getPosition().y;
+                }
+                */ 
+
+                sf::Uint8 messageType = SPRITE;
+                packet << sprites[j]->getPosition().x << sprites[j]->getPosition().y;
 
             }
+        }
+
+        for (auto& particle : particles) {
+            /*
+            if (isWithinPeriphery(particle.shape.getGlobalBounds(), sprites[i]->getViewBounds())) {
+                sf::Vector2f position = particle.shape.getPosition(); 
+                sf::Uint8 messageType = PARTICLE; 
+                packet << position.x << position.y; 
+            }
+            */ 
+
+            sf::Vector2f position = particle.shape.getPosition();
+            sf::Uint8 messageType = PARTICLE;
+            packet << position.x << position.y;
         }
 
         if (clients[i]->send(packet) != sf::Socket::Done) {
