@@ -73,7 +73,7 @@ void acceptClients() {
             if (selector.isReady(listener)) {
 
                 sf::TcpSocket* client = new sf::TcpSocket; 
-                client->setBlocking(true);
+                client->setBlocking(false);
                 if (listener.accept(*client) == sf::Socket::Done) {
                     clients.push_back(client); 
                     selector.add(*client); 
