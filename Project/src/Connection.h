@@ -40,34 +40,16 @@ void sendSpriteAndParticlePositions() {
 
         for (int j = 0; j < sprites.size(); j++) {
 
-            if (i != j) { // to avoid sending the sprite its own position 
-
-                // check if in periphery of sprite, for now not implemented 
-                if (isWithinPeriphery(sprites[j]->getGlobalBounds(), sprites[i]->getViewBounds())) {
-                    sf::Uint8 messageType = SPRITE; 
-                    packet << messageType << sprites[j]->getPosition().x << sprites[j]->getPosition().y;
-                }
-                
-                /*
+            if (i != j) { // to avoid sending the sprite its own 
                 sf::Uint8 messageType = SPRITE;
                 packet << messageType << sprites[j]->getPosition().x << sprites[j]->getPosition().y;
-                */
             }
         }
 
         for (auto& particle : particles) {
-
-            if (isWithinPeriphery(particle.shape.getGlobalBounds(), sprites[i]->getViewBounds())) {
-                sf::Vector2f position = particle.shape.getPosition(); 
-                sf::Uint8 messageType = PARTICLE; 
-                packet << messageType << position.x << position.y; 
-            }
-
-            /*
             sf::Vector2f position = particle.shape.getPosition();
             sf::Uint8 messageType = PARTICLE;
             packet << messageType << position.x << position.y;
-            */
         }
 
         if (clients[i]->send(packet) != sf::Socket::Done) {
