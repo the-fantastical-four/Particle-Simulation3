@@ -45,7 +45,7 @@ void sendSpriteAndParticlePositions() {
                 // check if in periphery of sprite, for now not implemented 
                 if (isWithinPeriphery(sprites[j]->getGlobalBounds(), sprites[i]->getViewBounds())) {
                     sf::Uint8 messageType = SPRITE; 
-                    packet << sprites[j]->getPosition().x << sprites[j]->getPosition().y;
+                    packet << messageType << sprites[j]->getPosition().x << sprites[j]->getPosition().y;
                 }
                 
                 /*
@@ -60,7 +60,7 @@ void sendSpriteAndParticlePositions() {
             if (isWithinPeriphery(particle.shape.getGlobalBounds(), sprites[i]->getViewBounds())) {
                 sf::Vector2f position = particle.shape.getPosition(); 
                 sf::Uint8 messageType = PARTICLE; 
-                packet << position.x << position.y; 
+                packet << messageType << position.x << position.y; 
             }
 
             /*
