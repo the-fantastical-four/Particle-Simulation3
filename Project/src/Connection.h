@@ -51,7 +51,7 @@ void sendSpriteAndParticlePositions() {
                 */ 
 
                 sf::Uint8 messageType = SPRITE;
-                packet << sprites[j]->getPosition().x << sprites[j]->getPosition().y;
+                packet << messageType << sprites[j]->getPosition().x << sprites[j]->getPosition().y;
 
             }
         }
@@ -67,7 +67,7 @@ void sendSpriteAndParticlePositions() {
 
             sf::Vector2f position = particle.shape.getPosition();
             sf::Uint8 messageType = PARTICLE;
-            packet << position.x << position.y;
+            packet << messageType << position.x << position.y;
         }
 
         if (clients[i]->send(packet) != sf::Socket::Done) {
