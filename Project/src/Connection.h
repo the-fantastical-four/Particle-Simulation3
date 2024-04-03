@@ -33,15 +33,13 @@ bool isWithinPeriphery(sf::FloatRect objectBounds, sf::FloatRect periphery) {
     return false; 
 }
 
-void sendSpriteAndParticlePositions() {
-    // sprite lock 
-    // get sprite size 
+void sendSpriteAndParticlePositions(int start, int end) {
 
-    for (int i = 0; i < sprites.size(); i++) { // might need to lock because access sprites.size()
+    for (int i = start; i < end; i++) { // might need to lock because access sprites.size()
 
         sf::Packet packet;
 
-        for (int j = 0; j < sprites.size(); j++) {
+        for (int j = start; j < end; j++) {
 
             if (i != j) { // to avoid sending the sprite its own 
                 sf::Uint8 messageType = SPRITE;
@@ -61,6 +59,23 @@ void sendSpriteAndParticlePositions() {
         if (clients[i]->send(packet) != sf::Socket::Done) {
             std::cout << "Error sending packet to client " << i << std::endl;
         }
+    }
+}
+
+void sendSpriteAndParticlePositionsBatch() {
+    int numThreads = std::thread::hardware_concurrency(); 
+
+    numThreads = (numThreads <= 0) ? 1 : numThreads; 
+    int numClients = clients.size(); 
+
+    int batchSize = (numClients + numThreads - 1) / numThreads; 
+
+    std::vector<std::future<void>> futures;
+
+    for (int start = 0; start < numClients; start += batchSize) {
+        int end = std::min(start + batchSize, numClients); 
+        auto future = std::async(std::launch::async, sendSpriteAndParticlePositions, start, end); 
+        futures.push_back(std::move(future)); 
     }
 }
 

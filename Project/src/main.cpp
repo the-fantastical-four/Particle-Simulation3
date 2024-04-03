@@ -122,7 +122,7 @@ int main() {
         // restart clock, don't move this or else it affects the position of the particles 
         frame_clock.restart();
 
-        std::async(std::launch::async, sendSpriteAndParticlePositions); // might change this to a separate thread 
+        sendSpriteAndParticlePositionsBatch();
 
         // Draw sprites
         // spriteManager.draw(window);
