@@ -35,8 +35,9 @@ sf::Vector2f SpriteManager::getPosition() {
 
 sf::FloatRect SpriteManager::getViewBounds() {
     // setting periphery 
-    const float peripheryWidth = 33 * 10; // 33 columns, each 10 pixels wide
-    const float peripheryHeight = 19 * 10; // 19 rows, each 10 pixels tall
+    // wider so that we consider when the sprite moves 
+    const float peripheryWidth = 77 * 10; // 33 columns, each 10 pixels wide
+    const float peripheryHeight = 55 * 10; // 19 rows, each 10 pixels tall
 
     // Center the view on the sprite's current position
     sf::Vector2f center(sprite.getPosition().x + sprite.getGlobalBounds().width / 2, 

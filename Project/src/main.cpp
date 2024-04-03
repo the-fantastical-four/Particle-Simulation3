@@ -57,9 +57,10 @@ int main() {
 
     sf::Clock deltaClock;
 
-    // SpriteManager spriteManager("include/pikachu.png", sf::Vector2f(0.5f, 0.5f), sf::Vector2f(0, 0));
     std::thread acceptClientThread(acceptClients); 
     acceptClientThread.detach(); 
+
+    // launch send thread here 
 
     // Create background 
     sf::RectangleShape background;
@@ -121,11 +122,12 @@ int main() {
         // restart clock, don't move this or else it affects the position of the particles 
         frame_clock.restart();
 
-        std::async(std::launch::async, sendSpriteAndParticlePositions);
+        std::async(std::launch::async, sendSpriteAndParticlePositions); // might change this to a separate thread 
 
         // Draw sprites
         // spriteManager.draw(window);
         for (auto& sprite : sprites) {
+            // lock here 
             sprite->draw(window); 
         }
 

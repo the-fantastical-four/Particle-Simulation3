@@ -34,6 +34,9 @@ bool isWithinPeriphery(sf::FloatRect objectBounds, sf::FloatRect periphery) {
 }
 
 void sendSpriteAndParticlePositions() {
+    // sprite lock 
+    // get sprite size 
+
     for (int i = 0; i < sprites.size(); i++) { // might need to lock because access sprites.size()
 
         sf::Packet packet;
@@ -45,6 +48,9 @@ void sendSpriteAndParticlePositions() {
                 packet << messageType << sprites[j]->getPosition().x << sprites[j]->getPosition().y;
             }
         }
+
+        // lock 
+        // get particle size 
 
         for (auto& particle : particles) {
             sf::Vector2f position = particle.shape.getPosition();
@@ -79,6 +85,8 @@ void acceptClients() {
                     selector.add(*client); 
 
                     SpriteManager* spriteManager = new SpriteManager("include/pikachu.png", sf::Vector2f(0.5f, 0.5f), sf::Vector2f(0, 0));
+                    
+                    // sprite lock 
                     sprites.push_back(spriteManager);
                 }
                 else {
@@ -98,6 +106,7 @@ void acceptClients() {
                             int index = std::distance(clients.begin(), it);
                             float x, y;
                             packet >> x >> y;
+                            // sprite lock here 
                             sprites[index]->update(sf::Vector2f(x, y));
                         }
 
