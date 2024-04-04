@@ -39,7 +39,7 @@ void sendSpriteAndParticlePositions(int start, int end) {
 
         sf::Packet packet;
 
-        for (int j = start; j < end; j++) {
+        for (int j = 0; j < clients.size(); j++) {
 
             if (i != j) { // to avoid sending the sprite its own 
                 sf::Uint8 messageType = SPRITE;
@@ -50,10 +50,14 @@ void sendSpriteAndParticlePositions(int start, int end) {
         // lock 
         // get particle size 
 
+        sf::FloatRect viewBounds = sprites[i]->getViewBounds(); 
+
         for (auto& particle : particles) {
-            sf::Vector2f position = particle.shape.getPosition();
-            sf::Uint8 messageType = PARTICLE;
-            packet << messageType << position.x << position.y;
+            isWithinPeriphery(viewBounds, particle.shape.getGlobalBounds()) {
+                sf::Vector2f position = particle.shape.getPosition();
+                sf::Uint8 messageType = PARTICLE;
+                packet << messageType << position.x << position.y;
+            }
         }
 
         if (clients[i]->send(packet) != sf::Socket::Done) {
@@ -76,6 +80,10 @@ void sendSpriteAndParticlePositionsBatch() {
         int end = std::min(start + batchSize, numClients); 
         auto future = std::async(std::launch::async, sendSpriteAndParticlePositions, start, end); 
         futures.push_back(std::move(future)); 
+    }
+
+    for (auto& future : futures) {
+        future.get(); 
     }
 }
 
