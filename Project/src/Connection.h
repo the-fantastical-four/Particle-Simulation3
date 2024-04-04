@@ -17,7 +17,7 @@ std::vector<sf::TcpSocket*> clients;
 extern std::vector<SpriteManager*> sprites; 
 extern std::vector<Particle> particles; 
 
-extern std::mutex clientsMutex; 
+extern std::mutex spriteMutex; 
 
 int connectionCounter = 0; 
 
@@ -50,9 +50,9 @@ void sendSpriteAndParticlePositions(int start, int end) {
         // lock 
         // get particle size 
 
-        clientsMutex.lock(); 
+        spriteMutex.lock(); 
         sf::FloatRect viewBounds = sprites[i]->getViewBounds(); 
-        clientsMutex.unlock(); 
+        spriteMutex.unlock(); 
 
         for (auto& particle : particles) {
             if (isWithinPeriphery(viewBounds, particle.shape.getGlobalBounds())) {
@@ -112,9 +112,9 @@ void acceptClients() {
                     SpriteManager* spriteManager = new SpriteManager("include/pikachu.png", sf::Vector2f(0.5f, 0.5f), sf::Vector2f(0, 0));
                     
                     // sprite lock 
-                    clientsMutex.lock();
+                    spriteMutex.lock();
                     sprites.push_back(spriteManager);
-                    clientsMutex.unlock();
+                    spriteMutex.unlock();
                 }
                 else {
                     delete client; 

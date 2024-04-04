@@ -39,7 +39,7 @@ std::vector<Particle> particles;
 
 std::vector<SpriteManager*> sprites; 
 
-std::mutex clientsMutex; 
+std::mutex spriteMutex; 
 
 void show_frame_rate(float fps) {
     ImGui::Begin("Frame Rate");
