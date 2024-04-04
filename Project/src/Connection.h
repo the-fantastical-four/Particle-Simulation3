@@ -53,7 +53,7 @@ void sendSpriteAndParticlePositions(int start, int end) {
         sf::FloatRect viewBounds = sprites[i]->getViewBounds(); 
 
         for (auto& particle : particles) {
-            isWithinPeriphery(viewBounds, particle.shape.getGlobalBounds()) {
+            if (isWithinPeriphery(viewBounds, particle.shape.getGlobalBounds())) {
                 sf::Vector2f position = particle.shape.getPosition();
                 sf::Uint8 messageType = PARTICLE;
                 packet << messageType << position.x << position.y;
