@@ -50,7 +50,9 @@ void sendSpriteAndParticlePositions(int start, int end) {
         // lock 
         // get particle size 
 
+        clientsMutex.lock(); 
         sf::FloatRect viewBounds = sprites[i]->getViewBounds(); 
+        clientsMutex.unlock(); 
 
         for (auto& particle : particles) {
             if (isWithinPeriphery(viewBounds, particle.shape.getGlobalBounds())) {
@@ -110,7 +112,9 @@ void acceptClients() {
                     SpriteManager* spriteManager = new SpriteManager("include/pikachu.png", sf::Vector2f(0.5f, 0.5f), sf::Vector2f(0, 0));
                     
                     // sprite lock 
+                    clientsMutex.lock();
                     sprites.push_back(spriteManager);
+                    clientsMutex.unlock();
                 }
                 else {
                     delete client; 
@@ -125,12 +129,22 @@ void acceptClients() {
                         // The client has sent some data, we can receive it
 
                         sf::Packet packet;
-                        if (client.receive(packet) == sf::Socket::Done) {
+                        sf::Socket::Status status = client.receive(packet); 
+                        if (status == sf::Socket::Done) {
                             int index = std::distance(clients.begin(), it);
                             float x, y;
                             packet >> x >> y;
                             // sprite lock here 
                             sprites[index]->update(sf::Vector2f(x, y));
+                        }
+                        else if (status == sf::Socket::Disconnected) {
+                            int index = std::distance(clients.begin(), it);
+                            selector.remove(client); 
+                            delete* it; 
+                            clients.erase(it); 
+                            delete sprites[index]; 
+                            sprites.erase(sprites.begin() + index); 
+                            break; 
                         }
 
                     }
