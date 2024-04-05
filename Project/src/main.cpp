@@ -126,10 +126,12 @@ int main() {
 
         // Draw sprites
         // spriteManager.draw(window);
+        spriteMutex.lock(); 
         for (auto& sprite : sprites) {
             // lock here 
             sprite->draw(window); 
         }
+        spriteMutex.unlock(); 
 
         // Draw particles
 

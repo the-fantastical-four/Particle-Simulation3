@@ -94,6 +94,11 @@ void acceptClients() {
         std::cerr << "Failed to bind to port " << port << std::endl;
     }
     std::cout << "Server is listening on port " << port << std::endl;
+    sf::IpAddress localAddress = sf::IpAddress::getLocalAddress();
+    sf::IpAddress publicAddress = sf::IpAddress::getPublicAddress();
+
+    std::cout << "Local address " << localAddress << std::endl; 
+    std::cout << "Public address " << publicAddress << std::endl; 
 
     selector.add(listener);  
 
@@ -135,15 +140,19 @@ void acceptClients() {
                             float x, y;
                             packet >> x >> y;
                             // sprite lock here 
+                            spriteMutex.lock(); 
                             sprites[index]->update(sf::Vector2f(x, y));
+                            spriteMutex.unlock(); 
                         }
                         else if (status == sf::Socket::Disconnected) {
                             int index = std::distance(clients.begin(), it);
                             selector.remove(client); 
                             delete* it; 
                             clients.erase(it); 
+                            spriteMutex.lock(); 
                             delete sprites[index]; 
                             sprites.erase(sprites.begin() + index); 
+                            spriteMutex.unlock(); 
                             break; 
                         }
 
