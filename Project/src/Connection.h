@@ -116,7 +116,7 @@ void acceptClients() {
                     clients.push_back(client); 
                     selector.add(*client); 
 
-                    SpriteManager* spriteManager = new SpriteManager(imgPaths[spriteCounter], sf::Vector2f(0.5f, 0.5f), sf::Vector2f(0, 0));
+                    SpriteManager* spriteManager = new SpriteManager(imgPaths[spriteCounter], sf::Vector2f(1.0f, 1.0f), sf::Vector2f(0, 0));
                     
                     // sprite lock 
                     spriteMutex.lock();
