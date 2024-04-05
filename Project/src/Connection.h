@@ -21,7 +21,7 @@ extern std::mutex spriteMutex;
 
 int connectionCounter = 0; 
 
-std::string imgPaths[2] = { "include/pikachu.png", "include/snorlax.png" };
+std::string imgPaths[4] = { "include/pikachu.png", "include/snorlax.png", "include/eevee.png", "include/jigglypuff.png"};
 
 unsigned short port = 6250; 
 
@@ -102,6 +102,8 @@ void acceptClients() {
 
     selector.add(listener);  
 
+    int spriteCounter = 0; 
+
 	while (true) {
 
         // selector waits for data on any socket
@@ -114,12 +116,14 @@ void acceptClients() {
                     clients.push_back(client); 
                     selector.add(*client); 
 
-                    SpriteManager* spriteManager = new SpriteManager("include/pikachu.png", sf::Vector2f(0.5f, 0.5f), sf::Vector2f(0, 0));
+                    SpriteManager* spriteManager = new SpriteManager(imgPaths[spriteCounter], sf::Vector2f(0.5f, 0.5f), sf::Vector2f(0, 0));
                     
                     // sprite lock 
                     spriteMutex.lock();
                     sprites.push_back(spriteManager);
                     spriteMutex.unlock();
+
+                    spriteCounter++; 
                 }
                 else {
                     delete client; 
@@ -153,6 +157,7 @@ void acceptClients() {
                             delete sprites[index]; 
                             sprites.erase(sprites.begin() + index); 
                             spriteMutex.unlock(); 
+                            spriteCounter--; 
                             break; 
                         }
 
